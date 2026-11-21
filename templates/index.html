@@ -1,0 +1,467 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuoteAI | Neural Text Engine</title>
+
+<style>
+:root {
+    --bg: #090e1b;
+    --panel: #141d30;
+    --border: #29364f;
+    --accent: #9277ff;
+    --text: #f3f4fa;
+    --muted: #94a3b8;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
+
+nav {
+    border-bottom: 1px solid var(--border);
+    padding: 18px 6%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.logo span { color: var(--accent); }
+
+.tagline {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-top: 5px;
+}
+
+.status {
+    color: #53d8a1;
+    background: #143229;
+    padding: 8px 13px;
+    border-radius: 30px;
+    font-size: 11px;
+}
+
+.status::before {
+    content: "● ";
+}
+
+main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 45px 20px;
+}
+
+.hero { text-align: center; margin-bottom: 30px; }
+
+.eyebrow {
+    color: var(--accent);
+    font-size: 11px;
+    letter-spacing: 3px;
+}
+
+h1 {
+    font-size: clamp(27px, 5vw, 42px);
+    margin: 16px 0;
+}
+
+h1 span { color: var(--accent); }
+
+.subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 25px 0;
+}
+
+.stat, .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+}
+
+.stat {
+    text-align: center;
+    padding: 17px 8px;
+}
+
+.stat strong {
+    color: var(--accent);
+    display: block;
+    font-size: 18px;
+}
+
+.stat small {
+    color: var(--muted);
+    font-size: 11px;
+    display: block;
+    margin-top: 7px;
+}
+
+.panel {
+    padding: 26px;
+    margin-bottom: 18px;
+}
+
+.field-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 13px;
+}
+
+label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .8px;
+}
+
+.hint {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+textarea, input[type="number"] {
+    background: #0d1527;
+    border: 1px solid #34425e;
+    border-radius: 9px;
+    color: white;
+    padding: 14px;
+    font: inherit;
+    outline: none;
+}
+
+textarea {
+    width: 100%;
+    min-height: 110px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+textarea:focus, input:focus {
+    border-color: var(--accent);
+}
+
+.controls {
+    margin-top: 25px;
+}
+
+.control-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+input[type="range"] {
+    flex: 1;
+    min-width: 0;
+    accent-color: var(--accent);
+    cursor: pointer;
+}
+
+input[type="number"] {
+    width: 72px;
+    text-align: center;
+}
+
+.word-label { color: var(--accent); }
+
+.generate {
+    width: 100%;
+    margin-top: 27px;
+    padding: 16px;
+    background: linear-gradient(110deg, #6754db, #a061e9);
+    border: none;
+    border-radius: 9px;
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: filter .2s, transform .2s;
+}
+
+.generate:hover {
+    filter: brightness(1.14);
+    transform: translateY(-1px);
+}
+
+.generate:disabled {
+    opacity: .65;
+    cursor: wait;
+    transform: none;
+}
+
+.output-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.output-header h2 {
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+
+#outputStatus {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+#result {
+    min-height: 90px;
+    margin-top: 20px;
+    color: #cbd5e1;
+    line-height: 1.9;
+    font-size: 15px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.output-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.copy {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.copy:hover { color: white; }
+
+footer {
+    text-align: center;
+    font-size: 11px;
+    color: #65748d;
+    margin-top: 30px;
+}
+
+@media(max-width: 480px) {
+    .panel { padding: 18px; }
+    .stat strong { font-size: 15px; }
+    .stat small { font-size: 10px; }
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+    <div>
+        <div class="logo">✳ Quote<span>AI</span></div>
+        <div class="tagline">NEURAL TEXT ENGINE</div>
+    </div>
+    <div class="status" id="modelStatus">API READY</div>
+</nav>
+
+<main>
+
+    <section class="hero">
+        <p class="eyebrow">GENERATIVE AI / LANGUAGE MODEL</p>
+        <h1>Turn thoughts into <span>words.</span></h1>
+        <p class="subtitle">
+            Generate intelligent text continuations
+            with your custom-trained LSTM neural network.
+        </p>
+    </section>
+
+    <div class="stats">
+        <div class="stat">
+            <strong>LSTM</strong>
+            <small>Architecture</small>
+        </div>
+        <div class="stat">
+            <strong>NLP</strong>
+            <small>Technology</small>
+        </div>
+        <div class="stat">
+            <strong>1–50</strong>
+            <small>Output Words</small>
+        </div>
+    </div>
+
+    <section class="panel">
+
+        <div class="field-header">
+            <label for="seedText">INITIAL PROMPT</label>
+            <span class="hint">INPUT / TEXT</span>
+        </div>
+
+        <textarea
+            id="seedText"
+            placeholder="Enter a thought, phrase, or beginning of a quote..."
+        ></textarea>
+
+        <div class="controls">
+            <div class="field-header">
+                <label for="wordCount">GENERATION LENGTH</label>
+                <span class="word-label">
+                    <span id="wordLabel">10</span> words
+                </span>
+            </div>
+
+            <div class="control-row">
+                <input
+                    type="range"
+                    id="wordSlider"
+                    min="1"
+                    max="50"
+                    value="10"
+                >
+
+                <input
+                    type="number"
+                    id="wordCount"
+                    min="1"
+                    max="50"
+                    value="10"
+                >
+            </div>
+        </div>
+
+        <button
+            class="generate"
+            id="generateBtn"
+            onclick="generateQuote()"
+        >
+            ✦ Generate with AI →
+        </button>
+
+    </section>
+
+    <section class="panel">
+        <div class="output-header">
+            <h2>✧ GENERATED OUTPUT</h2>
+            <span id="outputStatus">READY</span>
+        </div>
+
+        <div id="result" aria-live="polite">
+            Your AI-generated text will appear here.
+        </div>
+
+        <div class="output-actions">
+            <button class="copy" onclick="copyResult()">
+                ⧉ Copy Output
+            </button>
+        </div>
+    </section>
+
+    <footer>
+        POWERED BY YOUR CUSTOM LSTM MODEL
+        · TENSORFLOW / KERAS
+    </footer>
+
+</main>
+
+<script>
+const slider = document.getElementById("wordSlider");
+const countInput = document.getElementById("wordCount");
+const wordLabel = document.getElementById("wordLabel");
+
+function syncCount(value) {
+    const count = Math.max(
+        1, Math.min(50, Number(value) || 1)
+    );
+
+    slider.value = count;
+    countInput.value = count;
+    wordLabel.textContent = count;
+}
+
+slider.addEventListener("input", () => {
+    syncCount(slider.value);
+});
+
+countInput.addEventListener("change", () => {
+    syncCount(countInput.value);
+});
+
+async function generateQuote() {
+    const text = document.getElementById("seedText").value.trim();
+    syncCount(countInput.value);
+
+    const wordCount = Number(countInput.value);
+    const result = document.getElementById("result");
+    const button = document.getElementById("generateBtn");
+    const status = document.getElementById("outputStatus");
+
+    if (!text) {
+        result.textContent = "Please enter some starting text.";
+        return;
+    }
+
+    button.disabled = true;
+    button.textContent = "◌ Generating...";
+    status.textContent = "PROCESSING";
+    result.textContent = "Your neural network is generating text...";
+
+    try {
+        const response = await fetch("/predict", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                text: text,
+                next_words: wordCount
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || "Prediction failed.");
+        }
+
+        result.textContent = data.generated_quote;
+        status.textContent = "COMPLETE";
+
+    } catch (error) {
+        result.textContent = "Error: " + error.message;
+        status.textContent = "ERROR";
+
+    } finally {
+        button.disabled = false;
+        button.textContent = "✦ Generate with AI →";
+    }
+}
+
+async function copyResult() {
+    const result = document.getElementById("result").textContent;
+
+    try {
+        await navigator.clipboard.writeText(result);
+    } catch (error) {
+        console.error("Copy failed:", error);
+    }
+}
+</script>
+
+</body>
+</html>
